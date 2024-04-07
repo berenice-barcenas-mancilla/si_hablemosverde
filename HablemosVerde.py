@@ -38,9 +38,12 @@ print(mydata)
 
 # Función para limpiar el texto del archivo
 def clean(text):
-    # Removemos los caracteres y números que no se ocuparon
-    text = re.sub('[^A-Za-z]+', ' ', text)
-    return text
+    if pd.isna(text):
+        return text
+    else:
+        # Removemos los caracteres y números que no se ocuparon
+        text = re.sub('[^A-Za-z]+', ' ', str(text))
+        return text
 
 # Limpiar el texto en las columnas traducidas
 mydata['pr1'] = mydata['pr1'].apply(clean)
@@ -48,17 +51,19 @@ mydata['pr2'] = mydata['pr2'].apply(clean)
 mydata['pr3'] = mydata['pr3'].apply(clean)
 mydata['pr4'] = mydata['pr4'].apply(clean)
 mydata['pr5'] = mydata['pr5'].apply(clean)
-print(mydata)
 
 # Función para tokenizar y etiquetar el texto
 pos_dict = {'J': wordnet.ADJ, 'V': wordnet.VERB, 'N': wordnet.NOUN, 'R': wordnet.ADV}
 def token_stop_pos(text):
-    tags = pos_tag(word_tokenize(text))
-    newlist = []
-    for word, tag in tags:
-        if word.lower() not in set(stopwords.words('english')):
-            newlist.append(tuple([word, pos_dict.get(tag[0])]))
-    return newlist
+    if pd.isna(text):
+        return []
+    else:
+        tags = pos_tag(word_tokenize(text))
+        newlist = []
+        for word, tag in tags:
+            if word.lower() not in set(stopwords.words('english')):
+                newlist.append(tuple([word, pos_dict.get(tag[0])]))
+        return newlist
 
 # Función para lematizar el texto
 wordnet_lemmatizer = WordNetLemmatizer()
